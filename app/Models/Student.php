@@ -4,19 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Role extends Model
+class Student extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'value',
+        'email',
+        'nrc',
+        'birth_date',
     ];
-
-    public function users() :HasMany
-    {
-        return $this->hasMany(User::class);
-    }
 }

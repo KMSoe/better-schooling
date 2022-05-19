@@ -6,17 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Role extends Model
+class Teacher extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'value',
+        'email',
     ];
 
-    public function users() :HasMany
+    public function courses() :HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Course::class);
     }
 }
