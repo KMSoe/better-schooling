@@ -19,7 +19,7 @@
                     <input type="text" class="form-control filter-input" placeholder="Search Name ..." data-column="0" id="datepicker">
                 </td>
                 <td class="d-flex">
-                    <input type="date" class="form-control filter-input me-1" placeholder="Search Birth Date ..." data-column="1">
+                    <input type="text" class="form-control me-1" placeholder="Search Birth Date ..." data-column="1" id="datePicker">
                     <button class="btn btn-secondary" id="resetDate">reset</button>
                 </td>
                 <td>
@@ -44,11 +44,13 @@
 <script>
     $(document).ready(function() {
 
-        $("#datepicker").datepicker();
+        $("#datePicker").datepicker({
+            dateFormat: 'M dd, yy'
+        });
 
 
         $('#resetDate').click(function() {
-            console.log('reset');
+            $.datepicker._clearDate($("#datePicker"));
         });
 
         const table = $('#students-table').DataTable({
@@ -87,16 +89,16 @@
         });
 
         $(".filter-input").keyup(function() {
-            if ($(this).data('column') == 1) {
-                table.column($(this).data('column'))
-                    .search(new Date('M D, Y', $(this).val()))
-                    .draw();
-                return;
-            }
             table.column($(this).data('column'))
                 .search($(this).val())
                 .draw();
         })
+
+        $("#datePicker").change(function() {
+            table.column($(this).data('column'))
+                .search($(this).val())
+                .draw();
+        });
     });
 </script>
 @endsection

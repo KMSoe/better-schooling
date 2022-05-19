@@ -89,10 +89,10 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label for="birth-date" class="col-md-4 col-form-label text-md-end">{{ __('Date Of Birth') }}</label>
+                            <label for="datePicker" class="col-md-4 col-form-label text-md-end">{{ __('Date Of Birth') }}</label>
 
                             <div class="col-md-6">
-                                <input id="birth-date" type="date" class="form-control @error('birth-date') is-invalid @enderror" name="birth_date" value="{{ old('birth-date') }}" required>
+                                <input id="datePicker" type="text" class="form-control @error('birth-date') is-invalid @enderror" name="birth_date" value="{{ old('birth-date') }}" required>
 
                                 @error('birth_date')
                                 <span class="invalid-feedback" role="alert">
@@ -180,6 +180,6 @@
             coursesInput.value = coursesSelected;
         })
     });
-    $("#datepicker").datepicker();
+    $("#datePicker").datepicker();
 </script>
 @endsection
