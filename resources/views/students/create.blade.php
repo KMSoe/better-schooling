@@ -67,10 +67,12 @@
                                     </div>
                                     <div class="col-2">
                                         <select name="type" class="form-control col-1">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
+                                            <option value="N">( C )</option>
+                                            <option value="AC">( AC )</option>
+                                            <option value="NC">( NC )</option>
+                                            <option value="V">( V )</option>
+                                            <option value="M">( M )</option>
+                                            <option value="N">( N )</option>
                                         </select>
                                     </div>
                                     <div class="col-4">
@@ -178,5 +180,6 @@
             coursesInput.value = coursesSelected;
         })
     });
+    $("#datepicker").datepicker();
 </script>
 @endsection

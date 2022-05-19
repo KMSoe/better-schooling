@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class StudentController extends Controller
 {
@@ -17,13 +18,24 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::all();
-        
-        return view('students.index', [
-            'students' => $students,
-        ]);
+        if ($request->ajax()) {
+            $data = Student::latest()->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('birth_date', function ($row) {
+                    $date = date('M d, Y', strtotime($row->birth_date));
+                    return $date;
+                })
+                ->addColumn('courses', function ($row) {
+                    return $row->courses;
+                })
+                ->make(true);
+        }
+
+        return view('students.index');
     }
 
     /**
@@ -54,12 +66,12 @@ class StudentController extends Controller
             'password' => Hash::make($request->password),
             "role_id" => 1
         ]);
-        
+
         $nrc = "$request->state/$request->township($request->type) $request->nrc_number";
 
         $student = DB::insert('INSERT INTO students (name, email, nrc, birth_date, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())', [$request->name, $request->email, $nrc, $request->birth_date]);
 
-        if($student) {
+        if ($student) {
             $insertedStu = Student::where('email', $request->email)->first();
 
             $courseIds = explode(",", $request->courses);
