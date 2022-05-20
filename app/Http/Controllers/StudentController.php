@@ -9,10 +9,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Yajra\DataTables\Facades\DataTables;
+use Yajra\DataTables\DataTables;
 
 class StudentController extends Controller
 {
+    public function __construct()
+    {   
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -32,6 +37,15 @@ class StudentController extends Controller
                 ->addColumn('courses', function ($row) {
                     return $row->courses;
                 })
+                ->addColumn(
+                    'actions',
+                    function ($row) {
+                        return '<a href = "' . route('students.edit', ['student' => $row->id]) . '"
+                        class = "btn btn-info m-1"><i class="fas fa-edit"></i></a>
+                        <a href = "#" data-id=' . $row->id . '  class = "delete-btn btn btn-danger"><i class = "fas fa-trash"></i></a>';
+                    }
+                )
+                ->rawColumns(['actions'])
                 ->make(true);
         }
 
@@ -106,7 +120,17 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        //
+        $courses = Course::all();
+        $stuCourses = $student->courses->toArray();
+        $stuCourseIds = array_map(function ($el) {
+            return $el['id'];
+        }, $stuCourses);
+       
+        return view('students.edit', [
+            'courses' => $courses,
+            "student" => $student,
+            "stuCourseIds" => $stuCourseIds,
+        ]);
     }
 
     /**

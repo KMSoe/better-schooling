@@ -4,7 +4,18 @@
 <div class="container">
     <h3 class="mb-5">Student List <a href="{{ route('students.create') }}" class="btn btn-primary float-end">Add Student</a></h3>
 
-    <button class="btn">Filter</button>
+    @if(session('info'))
+    <div class="alert alert-info">
+        {{ session('info') }}
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert alert-warning">
+        {{ session('error') }}
+    </div>
+    @endif
+
     <table class="table table-striped table-bordered" id="students-table">
         <thead>
             <tr>
@@ -13,6 +24,7 @@
                 <th><i class="fas fa-at me-1"></i>Email</th>
                 <th><i class="fas fa-flag me-1"></i>NRC</th>
                 <th><i class="fas fa-book-open-reader me-1"></i>Courses</th>
+                <th><i class="fas fa-bars me-1"></i>Actions</th>
             </tr>
             <tr>
                 <td>
@@ -31,10 +43,10 @@
                 <td>
                     <input type="text" class="form-control filter-input" placeholder="Search Courses ..." data-column="4">
                 </td>
+                <td></td>
             </tr>
         </thead>
         <tbody>
-
         </tbody>
     </table>
 </div>
@@ -84,6 +96,10 @@
                         });
                         return div;
                     }
+                },
+                {
+                    name: 'actions',
+                    data: 'actions',
                 },
             ]
         });

@@ -92,7 +92,7 @@
                             <label for="datePicker" class="col-md-4 col-form-label text-md-end">{{ __('Date Of Birth') }}</label>
 
                             <div class="col-md-6">
-                                <input id="datePicker" type="text" class="form-control @error('birth-date') is-invalid @enderror" name="birth_date" value="{{ old('birth-date') }}" required>
+                                <input id="datePicker" type="text" class="form-control @error('birth-date') is-invalid @enderror" name="birth_date" value="{{ old('birth-date') }}" autocomplete="off" required>
 
                                 @error('birth_date')
                                 <span class="invalid-feedback" role="alert">
@@ -180,6 +180,8 @@
             coursesInput.value = coursesSelected;
         })
     });
-    $("#datePicker").datepicker();
+    $("#datePicker").datepicker({
+        dateFormat: 'yy-m-d'
+    });
 </script>
 @endsection

@@ -16,6 +16,9 @@ class AllowOnlyAdmin
      */
     public function handle(Request $request, Closure $next)
     {
+        if (auth()->user()->role->value !== 3) {
+            return abort(403);
+        }
         return $next($request);
     }
 }
