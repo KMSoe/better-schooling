@@ -154,6 +154,8 @@
         if (btn.classList.contains('bg-primary')) {
             coursesSelected.push(btn.dataset.id);
         }
+        coursesInput.value = coursesSelected;
+
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.target.classList.toggle('bg-secondary');
@@ -166,9 +168,10 @@
             }
 
             coursesSelected.push(courseId);
-
             coursesInput.value = coursesSelected;
+
         })
+
     });
     $("#datePicker").datepicker();
 </script>

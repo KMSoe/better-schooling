@@ -15,29 +15,25 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                <form action="{{ route('students.courses.store') }}" method="post" id="courseAddForm">
+                    @csrf
+                    <input type="hidden" name="courses" id="courses">
+                </form>
+                <div class="d-flex flex-wrap">
+                    @foreach($courses as $course)
+                    <span class="badge bg-secondary p-2 m-1 course" style="cursor: pointer;" data-id="{{ $course->id }}">{{ $course->name }}</span>
+                    @endforeach
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="submit" class="btn btn-primary" form="courseAddForm">Save</button>
             </div>
         </div>
     </div>
 </div>
 
 @section('content')
-@if(session('info'))
-<div class="alert alert-info">
-    {{ session('info') }}
-</div>
-@endif
-
-@if(session('error'))
-<div class="alert alert-warning">
-    {{ session('error') }}
-</div>
-@endif
-
 <table class="table table-striped table-bordered" id="courses-table">
     <thead>
         <tr>
@@ -67,7 +63,51 @@
 @endsection
 @section('js')
 <script>
+    const coursesInput = document.getElementById('courses');
+    const selectCourseBtns = document.querySelectorAll('.course');
+    const coursesSelected = [];
+
+    selectCourseBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.target.classList.toggle('bg-secondary');
+            e.target.classList.toggle('bg-primary');
+
+            const courseId = e.target.dataset.id;
+            if (coursesSelected.includes(courseId)) {
+                coursesSelected.splice(coursesSelected.indexOf(courseId), 1);
+                return;
+            }
+
+            coursesSelected.push(courseId);
+
+            coursesInput.value = coursesSelected;
+        })
+    });
+
+    function deattachCourse(courseId) {
+        let url = "{{ route('students.courses.destroy', [':id']) }}";
+        url = url.replace(':id', courseId);
+
+        axios.delete(url, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(res => {
+                $('#courses-table').DataTable().ajax.reload();
+                showAlert('info', 'Deleted');
+            })
+            .catch(({
+                response
+            }) => {
+                showAlert('warning', response.data.message);
+
+            })
+    }
+
     $(document).ready(function() {
+
         const table = $('#courses-table').DataTable({
             processing: true,
             serverSide: true,

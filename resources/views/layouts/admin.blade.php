@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title')</title>
 
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
     <!-- Fonts -->
@@ -38,6 +41,8 @@
 
 
             <section class="content">
+                @include('layouts.partials.alerts')
+
                 @yield('content')
             </section>
 
@@ -55,6 +60,14 @@
     <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        function showAlert(type, message) {
+            const alert = document.createElement('div');
+            alert.classList.value = `alert alert-${type}`;
+            alert.textContent = message;
+            document.querySelector('.alert-container').appendChild(alert);
+        }
+    </script>
     @yield('js')
 </body>
 

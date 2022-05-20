@@ -8,18 +8,6 @@
 @endsection
 
 @section('content')
-@if(session('info'))
-<div class="alert alert-info">
-    {{ session('info') }}
-</div>
-@endif
-
-@if(session('error'))
-<div class="alert alert-warning">
-    {{ session('error') }}
-</div>
-@endif
-
 <table class="table table-striped table-bordered" id="courses-table">
     <thead>
         <tr>
@@ -49,6 +37,25 @@
 @endsection
 @section('js')
 <script>
+    function deleteCourse(id) {
+        let url = "{{ route('courses.destroy', ':id') }}";
+        url = url.replace(':id', id);
+        axios.delete(url, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(res => {
+                $('#courses-table').DataTable().ajax.reload();
+                showAlert('info', 'Deleted');
+            })
+            .catch(({
+                response
+            }) => {
+                showAlert('warning', response.data.message);
+
+            })
+    }
     $(document).ready(function() {
         const table = $('#courses-table').DataTable({
             processing: true,

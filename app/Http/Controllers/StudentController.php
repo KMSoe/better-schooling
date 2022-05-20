@@ -40,8 +40,7 @@ class StudentController extends Controller
                     function ($row) {
                         return '<a href = "' . route('students.edit', ['student' => $row->id]) . '"
                         class = "btn btn-info m-1"><i class="fas fa-edit"></i></a>
-                        <form action="' . route('students.destroy', ['student' => $row->id]) . '" method="DELETE" class="d-inline"><button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-        </form>';
+                       <a href="javascript:void(0)" onClick="deleteStudent(' . $row->id . ')" class="btn btn-danger"><i class="fas fa-trash"></i></a>';
                     }
                 )
                 ->rawColumns(['actions'])
@@ -95,7 +94,7 @@ class StudentController extends Controller
                 $insertedStu->courses()->attach(intval($id));
             }
 
-            return redirect()->route('students.index')->with('success', 'Successfully added');
+            return redirect()->route('students.index')->with('info', 'Successfully added');
         }
 
         return back()->with('error', 'Something Went Wrong!!!');
@@ -150,11 +149,11 @@ class StudentController extends Controller
      */
     public function update(StudentUpdateRequest $request, Student $student)
     {
-       $user = User::where('email', $student->email)->first();
-       $user->name = $request->name;
-       $user->email = $request->email;
-       $user->password = Hash::make($request->password);
-       $user->save();
+        $user = User::where('email', $student->email)->first();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
 
         $nrc = "$request->state/$request->township($request->type) $request->nrc_number";
 
@@ -167,12 +166,14 @@ class StudentController extends Controller
         DB::table('course_student')->where('student_id', $student->id)->delete();
 
         foreach ($courseIds as $id) {
-            $student->courses()->attach(intval($id));
+            if ($id !== "") {
+                $student->courses()->attach(intval($id));
+            }
         }
         $result = $student->save();
 
         if ($result) {
-            return redirect()->route('students.index')->with('success', 'Successfully Updated');
+            return redirect()->route('students.index')->with('info', 'Successfully Updated');
         }
 
         return back()->with('error', 'Something Went Wrong!!!');
@@ -186,7 +187,13 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        $student->delete();
-        return redirect()->route('students.index')->with('info', 'Deleted');
+        User::where('email', $student->email)->first()->delete();
+        $result = $student->delete();
+
+        if ($result) {
+            return response()->json([], 204);
+        }
+
+        return response()->json(["success" => false, "message" => "Something Went Wrong"], 500);
     }
 }

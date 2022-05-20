@@ -29,6 +29,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::middleware(['auth'])->name('students.')->group(function () {
     Route::get('/courses', [StudentCourseController::class, 'index'])->name('courses.index');
+    Route::post('/courses', [StudentCourseController::class, 'store'])->name('courses.store');
+    Route::delete('/courses/{id}', [StudentCourseController::class, 'destroy'])->name('courses.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('/admin')->group(function () {

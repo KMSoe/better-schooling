@@ -31,8 +31,7 @@ class CourseController extends Controller
                     function ($row) {
                         return '<a href = "' . route('courses.edit', ['course' => $row->id]) . '"
                         class = "btn btn-info m-1"><i class="fas fa-edit"></i></a>
-                        <form action="' . route('courses.destroy', ['course' => $row->id]) . '" method="DELETE" class="d-inline"><button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-        </form>';
+                        <a href="javascript:void(0)" onClick="deleteCourse(' . $row->id . ')" class="btn btn-danger"><i class="fas fa-trash"></i></a>';
                     }
                 )
                 ->rawColumns(['actions'])
@@ -71,7 +70,7 @@ class CourseController extends Controller
         $result = $course->save();
 
         if ($result) {
-            return redirect()->route('courses.index')->with('success', 'Successfully added');
+            return redirect()->route('courses.index')->with('info', 'Successfully added');
         }
 
         return back()->with('error', 'Something Went Wrong!!!');
@@ -131,8 +130,14 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Course $course)
     {
-        //
+        $result = $course->delete();
+
+        if ($result) {
+            return response()->json([], 204);
+        }
+
+        return response()->json(["success" => false, "message" => "Something Went Wrong"], 500);
     }
 }
