@@ -162,8 +162,12 @@ class StudentController extends Controller
         $student->birth_date = $request->birth_date;
         $student->nrc = $nrc;
         $courseIds = explode(",", $request->courses);
-
-        DB::table('course_student')->where('student_id', $student->id)->delete();
+        
+        // $currentCourses = DB::select(DB::raw('SELECT * FROM course_student WHERE student_id=?'), [$student->id]);
+        
+        // foreach ($currentCourses as $course) {
+            DB::table('course_student')->where('student_id', $student->id)->delete();
+        // }
 
         foreach ($courseIds as $id) {
             if ($id !== "") {

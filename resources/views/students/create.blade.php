@@ -160,6 +160,7 @@
             const courseId = e.target.dataset.id;
             if (coursesSelected.includes(courseId)) {
                 coursesSelected.splice(coursesSelected.indexOf(courseId), 1);
+                coursesInput.value = coursesSelected;
                 return;
             }
 
