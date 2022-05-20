@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('title', 'Add Student')
 
 @section('content')
 <div class="container">
@@ -46,33 +48,19 @@
                                 <div class="row g-1">
                                     <div class="col-2">
                                         <select name="state" id="state" class="form-control">
-                                            <option value="1" selected>1&nbsp;/</option>
-                                            <option value="2">2/</option>
-                                            <option value="3">3/</option>
-                                            <option value="4">4/</option>
-                                            <option value="5">5/</option>
-                                            <option value="6">6/</option>
-                                            <option value="7">7/</option>
-                                            <option value="8">8/</option>
-                                            <option value="9">9/</option>
-                                            <option value="10">10/</option>
-                                            <option value="11">11/</option>
-                                            <option value="12">12/</option>
-                                            <option value="13">13/</option>
-                                            <option value="14">14/</option>
+                                            @foreach($states as $state)
+                                            <option value="{{ $state }}">{{ $state }}/</option>
+                                            @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-4 d-flex">
+                                    <div class="col-4">
                                         <input type="text" name="township" class="form-control">
                                     </div>
                                     <div class="col-2">
-                                        <select name="type" class="form-control col-1">
-                                            <option value="N">( C )</option>
-                                            <option value="AC">( AC )</option>
-                                            <option value="NC">( NC )</option>
-                                            <option value="V">( V )</option>
-                                            <option value="M">( M )</option>
-                                            <option value="N">( N )</option>
+                                        <select name="type" class="form-control">
+                                            @foreach($nrcTypes as $type)
+                                            <option value="{{ $type }}">( {{ $type }} )</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-4">

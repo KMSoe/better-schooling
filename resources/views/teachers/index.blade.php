@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Student List')
-@section('content-header', 'Student List')
+@section('title', 'Teacher List')
+@section('content-header', 'Teacher List')
+
 @section('content-actions')
-<a href="{{ route('students.create') }}" class="btn btn-primary float-end">Add Student</a>
+<a href="{{ route('teachers.create') }}" class="btn btn-primary float-end">Add Teacher</a>
 @endsection
 
 @section('content')
-
 @if(session('info'))
 <div class="alert alert-info">
     {{ session('info') }}
@@ -20,13 +20,11 @@
 </div>
 @endif
 
-<table class="table table-striped table-bordered" id="students-table">
+<table class="table table-striped table-bordered" id="teachers-table">
     <thead>
         <tr>
             <th><i class="fas fa-user me-1"></i>Name</th>
-            <th><i class="fas fa-calendar-day me-1"></i>Date of Birth</th>
             <th><i class="fas fa-at me-1"></i>Email</th>
-            <th><i class="fas fa-flag me-1"></i>NRC</th>
             <th><i class="fas fa-book-open-reader me-1"></i>Courses</th>
             <th><i class="fas fa-bars me-1"></i>Actions</th>
         </tr>
@@ -34,18 +32,11 @@
             <td>
                 <input type="text" class="form-control filter-input" placeholder="Search Name ..." data-column="0">
             </td>
-            <td class="d-flex">
-                <input type="text" class="form-control me-1" placeholder="Search Birth Date ..." data-column="1" id="datePicker">
-                <button class="btn btn-secondary" id="resetDate">reset</button>
+            <td>
+                <input type="text" class="form-control filter-input" placeholder="Search Email ..." data-column="1">
             </td>
             <td>
-                <input type="text" class="form-control filter-input" placeholder="Search Email ..." data-column="2">
-            </td>
-            <td>
-                <input type="text" class="form-control filter-input" placeholder="Search NRC ..." data-column="3">
-            </td>
-            <td>
-                <input type="text" class="form-control filter-input" placeholder="Search Courses ..." data-column="4">
+                <input type="text" class="form-control filter-input" placeholder="Search Courses ..." data-column="2">
             </td>
             <td></td>
         </tr>
@@ -59,37 +50,19 @@
 @section('js')
 <script>
     $(document).ready(function() {
-
-        $("#datePicker").datepicker({
-            dateFormat: 'M dd, yy'
-        });
-
-
-        $('#resetDate').click(function() {
-            $.datepicker._clearDate($("#datePicker"));
-        });
-
-        const table = $('#students-table').DataTable({
+        const table = $('#teachers-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('students.index') }}",
+                url: "{{ route('teachers.index') }}",
             },
             columns: [{
                     data: 'name',
                     name: 'name'
                 },
                 {
-                    data: 'birth_date',
-                    name: 'birth_date'
-                },
-                {
                     data: 'email',
                     name: 'email'
-                },
-                {
-                    data: 'nrc',
-                    name: 'nrc'
                 },
                 {
                     data: 'courses',
@@ -113,12 +86,6 @@
                 .search($(this).val())
                 .draw();
         })
-
-        $("#datePicker").change(function() {
-            table.column($(this).data('column'))
-                .search($(this).val())
-                .draw();
-        });
     });
 </script>
 @endsection

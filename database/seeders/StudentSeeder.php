@@ -18,10 +18,7 @@ class StudentSeeder extends Seeder
         $users = User::where('role_id', 1)->get();
 
         foreach ($users as $user) {
-            Student::create([
-                "name" => $user->name,
-                "email" => $user->email,
-            ]);
+            \App\Models\Student::factory(1)->create(["name" => $user->name, 'email' => $user->email]);
         }
     }
 }

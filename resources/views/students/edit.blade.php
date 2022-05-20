@@ -1,5 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
+@section('title', 'Edit Student')
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -10,7 +11,7 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('students.update', ['student' => $student->id]) }}" id="add-student-form">
                         @csrf
-
+                        @method('PUT')
                         <div class="row mb-3">
                             <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
 
@@ -46,37 +47,23 @@
                                 <div class="row g-1">
                                     <div class="col-2">
                                         <select name="state" id="state" class="form-control">
-                                            <option value="1" selected>1&nbsp;/</option>
-                                            <option value="2">2/</option>
-                                            <option value="3">3/</option>
-                                            <option value="4">4/</option>
-                                            <option value="5">5/</option>
-                                            <option value="6">6/</option>
-                                            <option value="7">7/</option>
-                                            <option value="8">8/</option>
-                                            <option value="9">9/</option>
-                                            <option value="10">10/</option>
-                                            <option value="11">11/</option>
-                                            <option value="12">12/</option>
-                                            <option value="13">13/</option>
-                                            <option value="14">14/</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-4 d-flex">
-                                        <input type="text" name="township" class="form-control">
-                                    </div>
-                                    <div class="col-2">
-                                        <select name="type" class="form-control col-1">
-                                            <option value="N">( C )</option>
-                                            <option value="AC">( AC )</option>
-                                            <option value="NC">( NC )</option>
-                                            <option value="V">( V )</option>
-                                            <option value="M">( M )</option>
-                                            <option value="N">( N )</option>
+                                            @foreach($states as $state)
+                                            <option value="{{ $state }}" {{ $student->state == $state ? 'selected' : ''}}>{{ $state }}/</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-4">
-                                        <input type="text" name="nrc_number" class="form-control">
+                                        <input type="text" name="township" value="{{ $student->township }}" class="form-control">
+                                    </div>
+                                    <div class="col-2">
+                                        <select name="type" class="form-control">
+                                            @foreach($nrcTypes as $type)
+                                            <option value="{{ $type }}" {{ $student->nrcType == $type ? 'selected' : ''}}>( {{ $type }} )</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" name="nrc_number" value="{{ $student->nrcNumber }}" class="form-control">
                                     </div>
                                 </div>
 
@@ -164,7 +151,7 @@
     const coursesSelected = [];
 
     selectCourseBtns.forEach(btn => {
-        if(btn.classList.contains('bg-primary')) {
+        if (btn.classList.contains('bg-primary')) {
             coursesSelected.push(btn.dataset.id);
         }
         btn.addEventListener('click', (e) => {

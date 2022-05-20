@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Student\StudentStoreRequest;
+use App\Http\Requests\Student\StudentUpdateRequest;
 use App\Models\Course;
 use App\Models\Student;
 use App\Models\User;
@@ -13,11 +14,8 @@ use Yajra\DataTables\DataTables;
 
 class StudentController extends Controller
 {
-    public function __construct()
-    {   
-        $this->middleware('auth');
-        $this->middleware('admin');
-    }
+    private $states = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+    private $nrcTypes = ['C', 'AC', 'NC', 'V', 'M', 'N'];
     /**
      * Display a listing of the resource.
      *
@@ -42,7 +40,8 @@ class StudentController extends Controller
                     function ($row) {
                         return '<a href = "' . route('students.edit', ['student' => $row->id]) . '"
                         class = "btn btn-info m-1"><i class="fas fa-edit"></i></a>
-                        <a href = "#" data-id=' . $row->id . '  class = "delete-btn btn btn-danger"><i class = "fas fa-trash"></i></a>';
+                        <form action="' . route('students.destroy', ['student' => $row->id]) . '" method="DELETE" class="d-inline"><button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+        </form>';
                     }
                 )
                 ->rawColumns(['actions'])
@@ -63,6 +62,8 @@ class StudentController extends Controller
 
         return view('students.create', [
             'courses' => $courses,
+            'states' => $this->states,
+            'nrcTypes' => $this->nrcTypes,
         ]);
     }
 
@@ -91,7 +92,6 @@ class StudentController extends Controller
             $courseIds = explode(",", $request->courses);
 
             foreach ($courseIds as $id) {
-                // DB::insert('INSERT INTO course_student (course_id, student_id, created_at, updated_at) VALUES (?, ?, NOW(), NOW())', [intval($id), $insertedStu->id]);
                 $insertedStu->courses()->attach(intval($id));
             }
 
@@ -121,15 +121,23 @@ class StudentController extends Controller
     public function edit(Student $student)
     {
         $courses = Course::all();
+        $nrcArr = explode('/', $student->nrc);
+        $student->state = $nrcArr[0];
+        $nrcNumArr = explode('(', $nrcArr[1]);
+        $student->township = $nrcNumArr[0];
+        $student->nrcType = explode(')', $nrcNumArr[1])[0];
+        $student->nrcNumber = explode(')', $nrcNumArr[1])[1];
         $stuCourses = $student->courses->toArray();
         $stuCourseIds = array_map(function ($el) {
             return $el['id'];
         }, $stuCourses);
-       
+
         return view('students.edit', [
             'courses' => $courses,
             "student" => $student,
             "stuCourseIds" => $stuCourseIds,
+            'states' => $this->states,
+            'nrcTypes' => $this->nrcTypes,
         ]);
     }
 
@@ -140,9 +148,34 @@ class StudentController extends Controller
      * @param  \App\Models\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Student $student)
+    public function update(StudentUpdateRequest $request, Student $student)
     {
-        //
+       $user = User::where('email', $student->email)->first();
+       $user->name = $request->name;
+       $user->email = $request->email;
+       $user->password = Hash::make($request->password);
+       $user->save();
+
+        $nrc = "$request->state/$request->township($request->type) $request->nrc_number";
+
+        $student->name = $request->name;
+        $student->email = $request->email;
+        $student->birth_date = $request->birth_date;
+        $student->nrc = $nrc;
+        $courseIds = explode(",", $request->courses);
+
+        DB::table('course_student')->where('student_id', $student->id)->delete();
+
+        foreach ($courseIds as $id) {
+            $student->courses()->attach(intval($id));
+        }
+        $result = $student->save();
+
+        if ($result) {
+            return redirect()->route('students.index')->with('success', 'Successfully Updated');
+        }
+
+        return back()->with('error', 'Something Went Wrong!!!');
     }
 
     /**
@@ -153,6 +186,7 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        //
+        $student->delete();
+        return redirect()->route('students.index')->with('info', 'Deleted');
     }
 }

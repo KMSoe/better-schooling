@@ -7,18 +7,8 @@ use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class AdminController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Show the application dashboard.
      *
@@ -26,10 +16,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if (auth()->user()->role->value == 3) {
-            return redirect()->route('admin');
-        }
-
         $students = Student::all();
         $teachers = Teacher::all();
         $courses = Course::all();
