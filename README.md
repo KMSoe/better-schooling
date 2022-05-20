@@ -40,7 +40,7 @@
    cd better-schooling
    rename .env.example .env
   ```
-- create database with "better_schooling"
+- create database naming as"better_schooling"
 - Install Dependencies
   ```
   composer install or composer update
